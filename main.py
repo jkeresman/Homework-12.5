@@ -13,14 +13,7 @@ while want_to_play():
 
     first_name = input("Enter your first name: ")
     last_name = input("Enter your last name: ")
-
-    while True:
-        level = input("Choose level [easy / hard]: ")
-        try:
-            level_check(level)
-            break
-        except NonExistingLevelException as ex:
-            print(ex)
+    level = level_input()
 
     while True:
 
@@ -44,17 +37,14 @@ while want_to_play():
             print("You've guessed it. It is number " + str(secret))
             print("Attempts needed " + str(attempts))
 
-            while True:
-                show_top_scores = input("Wanna see top players at your level [yes / no]: ")
-                try:
-                    yes_no_check(show_top_scores)
-                    break
-                except YesNoException as ex:
-                    print(ex)
+            show_top_scores = show_scores_input()
 
             if show_top_scores.lower() == "yes":
+
                 print(f"TOP SCORES -> LEVEL = {level}")
-                for i, player in enumerate(get_top_scores(score_list=score_list, level=level)):
+                top_scores = get_top_scores(score_list=score_list, level=level)
+
+                for i, player in enumerate(top_scores):
                     print(f"{i + 1}. {player['first_name']} {player['last_name']}, attempts: {player['attempts']}")
 
             break

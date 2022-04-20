@@ -47,3 +47,25 @@ def yes_no_check(answer):
     answer_lowercase = answer.lower()
     if answer_lowercase != "yes" and answer_lowercase != "no":
         raise YesNoException(f"{answer} is neither yes or no")
+
+
+def level_input():
+    while True:
+        level = input("Choose level [easy / hard]: ")
+        try:
+            level_check(level)
+            break
+        except NonExistingLevelException as ex:
+            print(ex)
+    return level
+
+
+def show_scores_input():
+    while True:
+        show_top_scores = input("Wanna see top players at your level [yes / no]: ")
+        try:
+            yes_no_check(show_top_scores)
+            break
+        except YesNoException as ex:
+            print(ex)
+    return show_top_scores
