@@ -1,53 +1,60 @@
-from files import *
 from functions import *
+from json_functions import read_from_json, write_to_json
 import datetime
 import random
 
-score_json = "score.json"
-score_list = read_from_json(json_file=score_json)
+from player import Player
 
-while want_to_play():
 
-    secret = random.randint(1, 30)
-    attempts = 0
+def main():
 
-    first_name = input("Enter your first name: ")
-    last_name = input("Enter your last name: ")
-    level = level_input()
+    score_json = "json_files/score.json"
+    score_list = read_from_json(json_file=score_json)
 
-    while True:
+    while want_to_play():
 
-        guess = guess_input_check()
-        attempts += 1
+        secret = random.randint(1, 30)
+        attempts = 0
 
-        if guess == secret:
-            score_list.append(
-                {
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "attempts": attempts,
-                    "wrong_guesses": attempts - 1,
-                    "date": str(datetime.datetime.now()),
-                    "level": level,
-                }
-            )
+        first_name = input("Enter your first name: ")
+        last_name = input("Enter your last name: ")
+        full_name = first_name + " " + last_name
+        level = level_input()
 
-            write_to_json(json_file=score_json, score_list=score_list)
+        while True:
 
-            print("You've guessed it. It is number " + str(secret))
-            print("Attempts needed " + str(attempts))
+            guess = guess_input_check()
+            attempts += 1
 
-            show_top_scores = show_scores_input()
+            if guess == secret:
+                player = Player(
+                    full_name=full_name,
+                    score=attempts,
+                    level=level,
+                    date=str(datetime.datetime.now())
+                )
+                score_list.append(player.__dict__)
 
-            if show_top_scores.lower() == "yes":
+                print("You've guessed it. It is number " + str(secret))
+                print("Attempts needed " + str(attempts))
 
-                print(f"TOP SCORES -> LEVEL = {level}")
-                top_scores = get_top_scores(score_list=score_list, level=level)
+                show_top_scores = show_scores_input()
 
-                for i, player in enumerate(top_scores):
-                    print(f"{i + 1}. {player['first_name']} {player['last_name']}, attempts: {player['attempts']}")
+                if show_top_scores.lower() == "yes":
 
-            break
+                    print(f"TOP SCORES -> LEVEL = {level}")
+                    top_scores = get_top_scores(score_list=score_list, level=level)
 
-        elif level.lower() == "easy":
-            get_hints(guess=guess, secret=secret)
+                    for i, player in enumerate(top_scores):
+                        print(f"{i + 1}. {player}")
+
+                break
+
+            elif level.lower() == "easy":
+                get_hints(guess=guess, secret=secret)
+
+        write_to_json(json_file=score_json, score_list=score_list)
+
+
+if __name__ == "__main__":
+    main()
